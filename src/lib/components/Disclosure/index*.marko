@@ -1,0 +1,45 @@
+import { createEvent, createSignal, onMount } from "marko";
+import { writable } from "svelte/store";
+import DisclosureItem, { disclosure } from "./../DisclosureItem/index.marko";
+
+const selected = writable(null);
+let className = "";
+let disclosureWrapper;
+
+const clickHandler = (itemId) => {
+  let currentVal = selected.get();
+  if (currentVal !== itemId) {
+    selected.set(itemId);
+    dispatch("change", itemId);
+  } else {
+    selected.set(null);
+    dispatch("change", null);
+  }
+};
+
+const getValue = (store) => {
+  let $val;
+  store.subscribe(($) => ($val = $))();
+  return $val;
+};
+
+export default {
+  onCreate() {
+    const [dispatch] = createSignal();
+    setContext(disclosure, { clickHandler, selected });
+  },
+  onMount() {
+    onMount(() => {
+      // Access the disclosureWrapper element here if needed
+    });
+  },
+  render(input, out) {
+    const { className } = input;
+
+    out.w`
+      <ul class="${className}" ref="disclosureWrapper">
+        <slot></slot>
+      </ul>
+    `;
+  },
+};

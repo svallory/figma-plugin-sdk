@@ -1,37 +1,44 @@
 <script>
+    import { createComponent } from 'marko';
 
-    export let group = null;
-    export let value = null;
-    export let disabled = false;
-    export let tabindex = 0;
-    export { className as class };
-
-    let uniqueId = 'radio--' + ((Math.random() * 10000000).toFixed(0)).toString();
-    let className = '';
-    $: checked = group === value;
-
+    export default createComponent({
+        init() {
+            this.uniqueId = 'radio--' + ((Math.random() * 10000000).toFixed(0)).toString();
+            this.className = '';
+            this.checked = this.inputGroup === this.value;
+        },
+        handleChange(event) {
+            this.checked = event.target.checked;
+            this.emit('change', { checked: this.checked });
+        },
+        handleFocus() {
+            this.emit('focus');
+        },
+        handleBlur() {
+            this.emit('blur');
+        }
+    });
 </script>
 
-<div class={className}>
+<div class=${className}>
     <input 
         type="radio"
-        {value}
-        {checked}
-        {disabled} 
-        {tabindex}
-        id={uniqueId}
-        bind:group={group}
+        value=${value}
+        checked=${checked}
+        disabled=${disabled}
+        tabindex=${tabindex}
+        id=${uniqueId}
+        name=${inputGroup}
         onclick="this.blur();"
-        on:change
-        on:focus
-        on:blur>
-    <label for={uniqueId}>
+        on-change("handleChange")
+        on-focus("handleFocus")
+        on-blur("handleBlur")>
+    <label for=${uniqueId}>
         <slot />
     </label>
 </div>
 
 <style>
-
     div {
         align-items: center;
         cursor: default;
@@ -84,7 +91,7 @@
     /* circle */
     label:before {
         border: 1px solid var(--figma-color-icon); 
-		border-radius: var(--border-radius-small);
+        border-radius: var(--border-radius-small);
         content: '';
         display: block;
         width: 10px;
@@ -105,5 +112,4 @@
         border: 1px solid var(--figma-color-border-selected);
         box-shadow: 0 0 0 1px var(--figma-color-border-selected);
     }
-
 </style>

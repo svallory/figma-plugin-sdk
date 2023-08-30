@@ -1,29 +1,44 @@
 <script>
-    
-    export let checked = false;
-    export let value = '';
-    export let disabled = false;
-    export let tabindex = 0;
-    export { className as class };
+    import { createComponent } from 'marko';
 
-    let uniqueId = 'switch--' + ((Math.random() * 10000000).toFixed(0)).toString();
-    let className = '';
-    
+    export default createComponent({
+        template: require.resolve('./switch.marko'),
+        init() {
+            this.uniqueId = 'switch--' + ((Math.random() * 10000000).toFixed(0)).toString();
+            this.className = '';
+        },
+        onInput(input) {
+            this.checked = input.checked || false;
+            this.value = input.value || '';
+            this.disabled = input.disabled || false;
+            this.tabindex = input.tabindex || 0;
+            this.className = input.class || '';
+        },
+        handleClick() {
+            this.emit('change');
+        },
+        handleFocus() {
+            this.emit('focus');
+        },
+        handleBlur() {
+            this.emit('blur');
+        }
+    });
 </script>
 
-<div class={className}>
+<div class=${className}>
     <input 
         type="checkbox" 
-        id={uniqueId} 
-        bind:checked={checked} 
-        bind:value={value} 
-        {disabled}  
-        {tabindex}
+        id=${uniqueId} 
+        checked=${checked} 
+        value=${value} 
+        disabled=${disabled}  
+        tabindex=${tabindex}
         onclick="this.blur();"
-        on:change
-        on:focus
-        on:blur>
-    <label for={uniqueId}>
+        on-change="handleClick"
+        on-focus="handleFocus"
+        on-blur="handleBlur">
+    <label for=${uniqueId}>
         <slot />
     </label>
 </div>

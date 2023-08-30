@@ -1,0 +1,63 @@
+<import style from './global.css'>
+
+<import Button from './components/Button/index.marko'/>
+<import Checkbox from './components/Checkbox/index.marko'/>
+<import Switch from './components/Switch/index.marko'/>
+<import Disclosure from './components/Disclosure/index.marko'/>
+<import DisclosureItem from './components/DisclosureItem/index.marko'/>
+<import Icon from './components/Icon/index.marko'/>
+<import IconButton from './components/IconButton/index.marko'/>
+<import Input from './components/Input/index.marko'/>
+<import Label from './components/Label/index.marko'/>
+<import OnboardingTip from './components/OnboardingTip/index.marko'/>
+<import Radio from './components/Radio/index.marko'/>
+<import Section from './components/Section/index.marko'/>
+<import SelectMenu from './components/SelectMenu/index.marko'/>
+<import Textarea from './components/Textarea/index.marko'/>
+<import Type from './components/Type/index.marko'/>
+
+<import IconAdjust from './icons/adjust.svg'/>
+<import IconAlert from './icons/alert.svg'/>
+<!-- ... rest of the icons ... -->
+
+class {
+    onCreate() {
+        this.state = {
+            radioValue: 'a',
+            menuItemsExample0: [],
+            menuItemsExample1: [
+                { 'value': 'item1', 'label': 'Menu item 1', 'group': null, 'selected': false },
+                { 'value': 'item2', 'label': 'Menu item 2 ', 'group': null, 'selected': false },
+                { 'value': 'item3', 'label': 'Menu item 3', 'group': null, 'selected': false },
+                { 'value': 'item4', 'label': 'Menu item 4', 'group': null, 'selected': false }
+            ],
+            // ... rest of the menu items ...
+        };
+    }
+
+    populateMenu() {
+        this.state.menuItemsExample0 = [
+            { 'value': 'item1', 'label': 'Menu item 1', 'group': null, 'selected': true },
+            { 'value': 'item2', 'label': 'Menu item 2 ', 'group': null, 'selected': false },
+        ];
+    }
+}
+
+<div class="wrapper" style="background-color: var(--figma-color-bg)">
+    <h1>Figma Plugin UI Svelte</h1>
+    <section>
+        <h2>Buttons</h2>
+        <div class="mb-xsmall">
+            <h3>Primary</h3>
+            <div class="flex row">
+                <Button class="mr-xxsmall">Label</Button>
+                <!-- ... rest of the buttons ... -->
+            </div>
+        </div>
+        <!-- ... rest of the sections ... -->
+    </section>
+</div>
+
+<style>
+    /* ... styles ... */
+</style>

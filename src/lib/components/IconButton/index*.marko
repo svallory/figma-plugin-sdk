@@ -1,0 +1,97 @@
+import Icon from './../Icon/index.marko';
+
+class {
+    /**
+     * iconName: The name of the icon to be displayed.
+     */
+    let iconName = '';
+
+    /**
+     * iconText: The text to be displayed as the icon's content.
+     */
+    let iconText = null;
+
+    /**
+     * selected: Indicates whether the icon is selected.
+     */
+    let selected = false;
+
+    /**
+     * spin: Indicates whether the icon should have a spinning animation.
+     */
+    let spin = false;
+
+    /**
+     * class: Additional CSS classes that can be applied to the icon.
+     */
+    let className = '';
+
+    function getIconColor() {
+        return selected ? '--figma-color-icon-onbrand' : '--figma-color-icon';
+    }
+
+    function getBackgroundColor() {
+        return selected ? '--figma-color-bg-selected-strong' : 'transparent';
+    }
+
+    function getBorderStyle() {
+        return selected ? '2px solid var(--figma-color-border-selected-strong)' : '2px solid transparent';
+    }
+
+    function getHoverBackgroundColor() {
+        return selected ? '--figma-color-bg-selected-strong' : '--figma-color-bg-hover';
+    }
+
+    function handleClick(event) {
+        selected = !selected;
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            selected = !selected;
+        }
+    }
+}
+
+<div class="icon-container" on-click("handleClick") on-keypress("handleKeyPress") class:selected style("background-color: ${getBackgroundColor()}") style("border: ${getBorderStyle()}")>
+    <if(condition="selected === true")>
+        <Icon iconName=iconName iconText=iconText spin=spin color=getIconColor() />
+    <else>
+        <Icon iconName=iconName iconText=iconText spin=spin color=getIconColor() />
+    </if>
+</div>
+
+<style>
+    .icon-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        width: var(--size-medium);
+        height: var(--size-medium);
+        border-radius: var(--border-radius-small);
+    }
+
+    .icon-container:hover {
+        background: var(${getHoverBackgroundColor()});
+    }
+
+    .icon-container:active,
+    .icon-container:focus {
+        border: ${getBorderStyle()};
+        outline: none;
+    }
+
+    .selected {
+        background-color: var(--figma-color-bg-selected-strong);
+    }
+
+    .selected:hover {
+        background-color: var(--figma-color-bg-selected-strong);
+    }
+
+    .selected:active,
+    .selected:focus {
+        border: 2px solid var(--figma-color-border-selected-strong);
+    }
+</style>

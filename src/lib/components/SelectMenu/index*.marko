@@ -1,0 +1,164 @@
+import { createEvent, createEventDispatcher } from 'marko/event';
+import ClickOutside from 'svelte-click-outside';
+import SelectItem from './../SelectItem/index.marko';
+import SelectDivider from './../SelectDivider/index.marko';
+import Icon from './../Icon/index.marko';
+
+class {
+  onCreate(input) {
+    this.iconName = input.iconName || null;
+    this.iconText = input.iconText || null;
+    this.disabled = input.disabled || false;
+    this.macOSBlink = input.macOSBlink || false;
+    this.menuItems = input.menuItems || [];
+    this.placeholder = input.placeholder || 'Please make a selection.';
+    this.value = input.value || null;
+    this.showGroupLabels = input.showGroupLabels || false;
+    this.className = input.className || '';
+    this.groups = this.checkGroups();
+    this.menuWrapper = null;
+    this.menuButton = null;
+    this.menuList = null;
+    this.updateSelectedAndIds();
+  }
+
+  onMount() {
+    console.clear();
+    this.updateSelectedAndIds();
+  }
+
+  updateSelectedAndIds() {
+    if (this.menuItems) {
+      this.menuItems.forEach((item, index) => {
+        item.id = index;
+        if (item.selected === true) {
+          this.value = item;
+        }
+      });
+    }
+    if (this.menuItems.length <= 0) {
+      this.disabled = true;
+    } else {
+      this.disabled = false;
+    }
+  }
+
+  checkGroups() {
+    let groupCount = 0;
+    if (this.menuItems) {
+      this.menuItems.forEach((item) => {
+        if (item.group != null) {
+          groupCount++;
+        }
+      });
+      if (groupCount === this.menuItems.length) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  removeHighlight(event) {
+    let items = Array.from(event.target.parentNode.children);
+    items.forEach((item) => {
+      item.blur();
+      item.classList.remove('highlight');
+    });
+  }
+
+  menuClick(event) {
+    this.resetMenuProperties();
+
+    if (!event.target) {
+      this.menuList.classList.add('hidden');
+    } else if (event.target.contains(this.menuButton)) {
+      let topPos = 0;
+
+      if (this.value) {
+        this.menuList.classList.remove('hidden');
+
+        let id = this.value.id;
+        let selectedItem = this.menuList.querySelector('[itemId="' + id + '"]');
+        selectedItem.focus();
+
+        let parentTop = this.menuList.getBoundingClientRect().top;
+        let itemTop = selectedItem.getBoundingClientRect().top;
+        topPos = itemTop - parentTop - 3;
+        this.menuList.style.top = -Math.abs(topPos) + 'px';
+
+        this.resizeAndPosition();
+      } else {
+        this.menuList.classList.remove('hidden');
+        this.menuList.style.top = '0px';
+        let firstItem = this.menuList.querySelector('[itemId="0"]');
+        firstItem.focus();
+
+        this.resizeAndPosition();
+      }
+    } else if (this.menuList.contains(event.target)) {
+      let itemId = parseInt(event.target.getAttribute('itemId'));
+
+      if (this.value) {
+        this.menuItems[this.value.id].selected = false;
+      }
+      this.menuItems[itemId].selected = true;
+      this.updateSelectedAndIds();
+      this.emit('change', this.menuItems[itemId]);
+
+      if (this.macOSBlink) {
+        var x = 4;
+        var interval = 70;
+
+        for (var i = 0; i < x; i++) {
+          setTimeout(function () {
+            event.target.classList.toggle('blink');
+          }, i * interval);
+        }
+        setTimeout(function () {
+          this.menuList.classList.add('hidden');
+        }, interval * x + 40);
+      } else {
+        this.menuList.classList.add('hidden');
+        this.menuButton.classList.remove('selected');
+      }
+    }
+  }
+
+  resizeAndPosition() {
+    let maxMenuHeight = window.innerHeight - 16;
+    let menuHeight = this.menuList.offsetHeight;
+    let menuResized = false;
+
+    if (menuHeight > maxMenuHeight) {
+      this.menuList.style.height = maxMenuHeight + 'px';
+      menuResized = true;
+    }
+
+    let bounding = this.menuList.getBoundingClientRect();
+    let parentBounding = this.menuButton.getBoundingClientRect();
+
+    if (bounding.top < 0) {
+      this.menuList.style.top = -Math.abs(parentBounding.top - 8) + 'px';
+    }
+    if (bounding.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
+      let minTop = -Math.abs(parentBounding.top - (window.innerHeight - menuHeight - 8));
+      let newTop = -Math.abs(bounding.bottom - window.innerHeight + 16);
+      if (menuResized) {
+        this.menuList.style.top = -Math.abs(parentBounding.top - 8) + 'px';
+      } else if (newTop > minTop) {
+        this.menuList.style.top = minTop + 'px';
+      } else {
+        this.menuList.style.top = newTop + 'px';
+      }
+    }
+  }
+
+  resetMenuProperties() {
+    this.menuList.style.height = 'auto';
+    this.menuList.style.top = '0px';
+  }
+}
+
+<ClickOutside on-click

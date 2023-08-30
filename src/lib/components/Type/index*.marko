@@ -1,0 +1,31 @@
+import { onMount } from 'marko';
+
+module.exports = {
+    onCreate() {
+        this.size = 'xsmall';
+        this.weight = 'normal';
+        this.inverse = false;
+        this.color = '--figma-color-text';
+        this.inline = false;
+        this.className = '';
+        this.cssColorVar = '';
+
+        onMount(async () => {
+            if (this.color === 'black8' && this.inverse) {
+                this.color = 'white';
+            }
+        });
+
+        this.cssColorVar = `var(${this.color})`;
+    },
+
+    render(input, out) {
+        const { size, weight, inverse, inline, className, cssColorVar } = this;
+
+        out.html`
+            <div class="type ${className} ${size} ${weight}" class:inverse=${inverse} class:inline=${inline} style="color: ${cssColorVar}">
+                <slot/>
+            </div>
+        `;
+    }
+}
